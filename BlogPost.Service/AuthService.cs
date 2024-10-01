@@ -6,6 +6,8 @@ using BlogPost.Application.Dto.Response;
 using BlogPost.Application.Interfaces.Auth;
 using BlogPost.Domain.Entities;
 using BlogPost.Domain.Interfaces;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,9 @@ namespace BlogPost.Service
         private readonly IAuthRepository _authRepository;
         private readonly IMapper _mapper;
         private readonly JWTSettings _jWTSettings;
-        private const int TokenExpiryTimeInMinute = 1440;
+        //private const int TokenExpiryTimeInMinute = 1440;
+        private const int TokenExpiryTimeInMinute = 1;
+        private const int RefreshTokenExpiryTimeDays = 7;
         private const string SecretKeyForResetPass = "Yjok123KjdflkLhjkl90483iujokkl904fdedmHjHJDKJF";
         public AuthService(
           IAuthRepository authRepository,
@@ -38,7 +42,7 @@ namespace BlogPost.Service
 
 
         //private methods
-        private string GenerateToken(UserLoginResponse user, int userId, int? val)
+        private string GenerateToken(User user, string userId, int? val,string? type="")
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jWTSettings.SecretKey));
 
@@ -55,18 +59,70 @@ namespace BlogPost.Service
                 new Claim("Email", user.Email),
 
             };
-
+            var TokenExpirationTime = DateTime.UtcNow.AddMinutes(TokenExpiryTimeInMinute);
+            if(type=="refreshToken")
+            {
+                TokenExpirationTime = DateTime.UtcNow.AddDays(RefreshTokenExpiryTimeDays);
+            }
             var token = new JwtSecurityToken(
                 _jWTSettings.Issuer,
                 _jWTSettings.Audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(TokenExpiryTimeInMinute),
+                expires: TokenExpirationTime,
                 signingCredentials: credentials
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return  new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public async Task<UserLoginResponse> RequestGenerateRefreshTokenAsync(string refreshToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var principal = tokenHandler.ValidateToken(refreshToken, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = _jWTSettings.Issuer,
+                ValidateAudience = true,
+                ValidAudience = _jWTSettings.Audience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jWTSettings.SecretKey)),
+                ValidateLifetime = false 
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = validatedToken as JwtSecurityToken;
+
+            var userId = jwtToken?.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
+            var email = jwtToken?.Claims.FirstOrDefault(x => x.Type == "Email")?.Value;
+
+            if (userId == null || email == null)
+            {
+                throw new SecurityTokenException("Invalid token claims.");
+            }
+
+       
+            var expirationClaim = jwtToken?.ValidTo;
+            if (expirationClaim <= DateTime.UtcNow)
+            {
+                throw new SecurityTokenException("Expired refresh token.");
+            }
+
+           
+            var user = await _authRepository.userLoginAsync(email);
+
+            if (user is null || !userId.Equals(user.Id.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ClientCustomException("Email is not correct", new()
+                {
+                    { "Email", "User not found with this email" }
+                });
+            }
+   
+            var response = _mapper.Map<UserLoginResponse>(user);
+            response.Token = GenerateToken(user, user.Id.ToString(), 1);
+            response.RefreshToken = GenerateToken(user, user.Id.ToString(), null, "refreshToken");
+            return response;
+        }
 
 
 
@@ -92,8 +148,8 @@ namespace BlogPost.Service
             }
 
             var response = _mapper.Map<UserLoginResponse>(user);
-            response.Token = GenerateToken(response, user.Id, 1);
-
+            response.Token = GenerateToken(user, user.Id.ToString(), 1);
+            response.RefreshToken = GenerateToken(user, user.Id.ToString(),null,"refreshToken");
             return response;
         }
 

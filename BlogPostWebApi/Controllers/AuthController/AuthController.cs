@@ -35,5 +35,24 @@ namespace BlogPostWebApi.Controllers.AuthController
             return Ok(result);
         }
         #endregion Save
+
+        #region RefreshToken
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        {
+            var result = await _authService.RequestGenerateRefreshTokenAsync(refreshToken);
+            return Ok(result);
+        }
+        #endregion RefreshToken
+        
+        [Authorize]
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok("Test");
+        }
+
+
     }
 }

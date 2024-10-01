@@ -11,6 +11,7 @@ namespace BlogPost.Application.Interfaces.Auth
     public interface IAuthService
     {
         Task<UserLoginResponse> Login(LoginRequest loginRequest);
+        Task<UserLoginResponse> RequestGenerateRefreshTokenAsync(string refreshToken);
 
         #region Save
         Task<UserResponse> Register(UserRequest request);

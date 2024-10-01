@@ -16,5 +16,6 @@ namespace BlogPost.Application.Dto.Response
     public class UserLoginResponse : UserResponse
     {
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
     }
 }
