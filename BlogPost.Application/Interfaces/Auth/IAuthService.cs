@@ -10,11 +10,11 @@ namespace BlogPost.Application.Interfaces.Auth
 {
     public interface IAuthService
     {
-        Task<UserLoginResponse> Login(LoginRequest loginRequest);
-        Task<UserLoginResponse> RequestGenerateRefreshTokenAsync(string refreshToken);
+        Task<ResponseDto<UserLoginResponse>> Login(LoginRequest loginRequest);
+        Task<ResponseDto<UserLoginResponse>> RequestGenerateRefreshTokenAsync(string refreshToken);
 
         #region Save
-        Task<UserResponse> Register(UserRequest request);
+        Task<ResponseDto<UserLoginResponse>> Register(UserRequest request);
         #endregion Save
     }
 }

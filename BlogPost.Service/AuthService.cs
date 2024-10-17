@@ -25,8 +25,8 @@ namespace BlogPost.Service
         private readonly IAuthRepository _authRepository;
         private readonly IMapper _mapper;
         private readonly JWTSettings _jWTSettings;
-        //private const int TokenExpiryTimeInMinute = 1440;
-        private const int TokenExpiryTimeInMinute = 1;
+        private const int TokenExpiryTimeInMinute = 1440;
+       // private const int TokenExpiryTimeInMinute = 1;
         private const int RefreshTokenExpiryTimeDays = 7;
         private const string SecretKeyForResetPass = "Yjok123KjdflkLhjkl90483iujokkl904fdedmHjHJDKJF";
         public AuthService(
@@ -75,7 +75,7 @@ namespace BlogPost.Service
             return  new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<UserLoginResponse> RequestGenerateRefreshTokenAsync(string refreshToken)
+        public async Task<ResponseDto<UserLoginResponse>> RequestGenerateRefreshTokenAsync(string refreshToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -117,17 +117,13 @@ namespace BlogPost.Service
                     { "Email", "User not found with this email" }
                 });
             }
-   
-            var response = _mapper.Map<UserLoginResponse>(user);
-            response.Token = GenerateToken(user, user.Id.ToString(), 1);
-            response.RefreshToken = GenerateToken(user, user.Id.ToString(), null, "refreshToken");
-            return response;
+            return await MapUserForRsp(user, "Token Generate in successfully");
         }
 
 
 
 
-        public async Task<UserLoginResponse> Login(LoginRequest loginRequest)
+        public async Task<ResponseDto<UserLoginResponse>> Login(LoginRequest loginRequest)
         {
             var user = await _authRepository.userLoginAsync(loginRequest.Email);
 
@@ -147,9 +143,22 @@ namespace BlogPost.Service
                 });
             }
 
-            var response = _mapper.Map<UserLoginResponse>(user);
-            response.Token = GenerateToken(user, user.Id.ToString(), 1);
-            response.RefreshToken = GenerateToken(user, user.Id.ToString(),null,"refreshToken");
+            return await MapUserForRsp(user, "User logged in successfully");
+        }
+
+
+        private async Task<ResponseDto<UserLoginResponse>> MapUserForRsp (User user,string msg)
+        {
+            var loginRsp = _mapper.Map<UserLoginResponse>(user);
+            loginRsp.Token = GenerateToken(user, user.Id.ToString(), 1);
+            loginRsp.RefreshToken = GenerateToken(user, user.Id.ToString(), null, "refreshToken");
+
+            var response = new ResponseDto<UserLoginResponse>
+            {
+                Data = loginRsp,
+                Message = msg,
+                StatusCode = 200
+            };
             return response;
         }
 
@@ -166,7 +175,7 @@ namespace BlogPost.Service
             }
         }
 
-        public async Task<UserResponse> Register(UserRequest request)
+        public async Task<ResponseDto<UserLoginResponse>> Register(UserRequest request)
         {
             try
             {
@@ -175,7 +184,13 @@ namespace BlogPost.Service
                 var user = _mapper.Map<User>(request);
                 var savedUser = await _authRepository.userRegisterAsync(user);
                 var userRes = _mapper.Map<UserLoginResponse>(savedUser);
-                return userRes;
+                var response = new ResponseDto<UserLoginResponse>
+                {
+                    Data = userRes,
+                    Message = "User registered successfully",
+                    StatusCode = 200
+                };
+                return response;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
