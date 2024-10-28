@@ -2,12 +2,7 @@
 using BlogPost.Domain.Entities;
 using BlogPost.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlogPost.Repo
 {
@@ -49,10 +44,10 @@ namespace BlogPost.Repo
         {
 
             // Calculate the number of items to skip
-            var skip = (pageIndex - 1) * pageSize;
+            int skip = (pageIndex - 1) * pageSize;
 
             // Create a paginated query
-            var pagedQuery = query
+            IQueryable<T> pagedQuery = query
                 .Skip(skip)
                 .Take(pageSize);
 
@@ -102,5 +97,22 @@ namespace BlogPost.Repo
         }
 
         #endregion DELETE METHOD
+        #region SOFT-DELETE
+        public async Task SoftDeleteAsync(T entity)
+        {
+            entity.IsDeleted = true;
+            entity.UpdatedOn = DateTime.UtcNow;
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
+
+        }
+        public async Task RestoreDeleteAsync(T entity)
+        {
+            entity.IsDeleted = false;
+            entity.UpdatedOn = DateTime.UtcNow;
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
+        }
+        #endregion SOFT-DELETE
     }
 }

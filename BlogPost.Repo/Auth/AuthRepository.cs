@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlogPost.Repo
+namespace BlogPost.Repo.Auth
 {
     public class AuthRepository : BaseRepository<User>, IAuthRepository
     {

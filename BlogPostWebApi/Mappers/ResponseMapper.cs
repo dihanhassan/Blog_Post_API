@@ -10,6 +10,8 @@ namespace BlogPostWebApi.Mappers
         {
             CreateMap<User, UserResponse>();
             CreateMap<User, UserLoginResponse>();
+            CreateMap<Category, CategoryResponse>();
+            CreateMap<Post, PostResponse>();
         }
     }
 }

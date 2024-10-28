@@ -3,7 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlogPost.Domain.Entities
 {
-    public class Category
+    [Table("Category", Schema = "dbo")]
+    //[Index("Name", IsUnique = true, = "Category_Route")]
+    public class Category : BaseEntity
     {
         public Category()
         {
