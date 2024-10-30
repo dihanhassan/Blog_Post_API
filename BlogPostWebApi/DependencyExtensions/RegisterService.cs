@@ -3,7 +3,7 @@ using BlogPost.Application.Interfaces.Categories;
 using BlogPost.Application.Interfaces.Posts;
 using BlogPost.Data.Setups;
 using BlogPost.Domain.Interfaces;
-using BlogPost.Service;
+using BlogPost.Service.Auth;
 using BlogPost.Service.Categories;
 using BlogPost.Service.Posts;
 

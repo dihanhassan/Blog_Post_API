@@ -12,6 +12,7 @@ namespace BlogPost.Application.Interfaces.Auth
     {
         Task<ResponseDto<UserLoginResponse>> Login(LoginRequest loginRequest);
         Task<ResponseDto<UserLoginResponse>> RequestGenerateRefreshTokenAsync(string refreshToken);
+        Task<int> ExtractUserInfoFromToken(string token);
 
         #region Save
         Task<ResponseDto<UserLoginResponse>> Register(UserRequest request);

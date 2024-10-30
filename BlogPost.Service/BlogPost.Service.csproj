@@ -28,8 +28,4 @@
     <ProjectReference Include="..\BlogPost.Repo\BlogPost.Repo.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Auth\" />
-  </ItemGroup>
-
 </Project>

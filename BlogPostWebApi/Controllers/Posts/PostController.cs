@@ -1,5 +1,6 @@
 ﻿using BlogPost.Application.Dto.Request;
 using BlogPost.Application.Dto.Response;
+using BlogPost.Application.Interfaces.Auth;
 using BlogPost.Application.Interfaces.Posts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,9 @@ namespace BlogPostWebApi.Controllers.Posts
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostResponse))]
         public async Task<IActionResult> AddPosts([FromBody] PostRequest request)
         {
-            PostResponse res = await _postService.AddPosts(request, 1);
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
+
+            PostResponse res = await _postService.AddPosts(request, Convert.ToInt32(userId));
             return Ok(res);
         }
         #endregion SAVE
