@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlogPost.Domain.Entities
 {
-    [Table("Category", Schema = "dbo")]
+    [Table("Categories", Schema = "dbo")]
     //[Index("Name", IsUnique = true, = "Category_Route")]
     public class Category : BaseEntity
     {

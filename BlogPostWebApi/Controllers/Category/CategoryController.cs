@@ -28,7 +28,9 @@ namespace BlogPostWebApi.Controllers.Category
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
         public async Task<IActionResult> AddCategory([FromBody] CategoryRequest categoryRequest)
         {
-            CategoryResponse res = await _categoryService.AddCategory(categoryRequest, 1);
+            
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
+            CategoryResponse res = await _categoryService.AddCategory(categoryRequest, Convert.ToInt32(userId));
             return Ok(res);
         }
         #endregion SAVE

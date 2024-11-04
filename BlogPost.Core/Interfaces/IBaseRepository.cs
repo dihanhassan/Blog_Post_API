@@ -8,7 +8,7 @@ namespace BlogPost.Domain.Interfaces
         IQueryable<T> Active();
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<IQueryable<T>> GetAllAsync();
-        public IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
+        IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
         Task<IQueryable<T>> GetPagedDataAsync(IQueryable<T> query, int pageIndex, int pageSize);
 
         #endregion Get

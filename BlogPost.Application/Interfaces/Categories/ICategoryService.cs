@@ -21,5 +21,6 @@ namespace BlogPost.Application.Interfaces.Categories
         #region Delete
         Task<CategoryResponse> DeleteCategory(int id);
         #endregion Delete
+
     }
 }

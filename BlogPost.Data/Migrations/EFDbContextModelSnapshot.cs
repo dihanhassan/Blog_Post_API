@@ -30,6 +30,14 @@ namespace BlogPost.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsDeleted");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -39,9 +47,13 @@ namespace BlogPost.Data.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasColumnName("Route");
 
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime")
+                        .HasColumnName("UpdatedOn");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", "dbo");
                 });
 
             modelBuilder.Entity("BlogPost.Domain.Entities.Post", b =>

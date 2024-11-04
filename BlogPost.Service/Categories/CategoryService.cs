@@ -32,10 +32,25 @@ namespace BlogPost.Service.Categories
             return existedCategory;
 
         }
+
+        private bool ExistingCategory(string route)
+        {
+            var existedCategory = _categoryRepository.GetByCondition(x => x.Route == route).FirstOrDefault();
+            if (existedCategory != null)
+            {
+                throw new ClientCustomException("Category already exists", new()
+                {
+                    {"Route", "Category Route is already exists." }
+                });
+            }
+            return true;
+        }
+
         #endregion Private
         #region Save
         public async Task<CategoryResponse> AddCategory(CategoryRequest categoryRequest, int createdBy)
         {
+            ExistingCategory(categoryRequest.Route);
             Category categoryEntity = _mapper.Map<Category>(categoryRequest);
             await _categoryRepository.AddAsync(categoryEntity);
             await _categoryRepository.SaveChangesAsync();
@@ -57,7 +72,7 @@ namespace BlogPost.Service.Categories
                 });
             }
             //var MappedResponse = _mapper.Map<Category>(findTagetedCategoryEntity);
-            await _categoryRepository.DeleteAsync(findTagetedCategoryEntity);
+            await _categoryRepository.SoftDeleteAsync(findTagetedCategoryEntity);
             await _categoryRepository.SaveChangesAsync();
             CategoryResponse deletedCategoryResponse = _mapper.Map<CategoryResponse>(findTagetedCategoryEntity);
             return deletedCategoryResponse;
