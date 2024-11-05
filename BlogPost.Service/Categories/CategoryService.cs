@@ -16,7 +16,6 @@ namespace BlogPost.Service.Categories
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
-
         }
         #region Private
         private async Task<Category> ValidateCategoryUpdateRequest(int id)
@@ -33,7 +32,7 @@ namespace BlogPost.Service.Categories
 
         }
 
-        private bool ExistingCategory(string route)
+        private async Task<bool> ExistingCategory(string route)
         {
             var existedCategory = _categoryRepository.GetByCondition(x => x.Route == route).FirstOrDefault();
             if (existedCategory != null)
@@ -45,12 +44,12 @@ namespace BlogPost.Service.Categories
             }
             return true;
         }
-
         #endregion Private
+
         #region Save
         public async Task<CategoryResponse> AddCategory(CategoryRequest categoryRequest, int createdBy)
         {
-            ExistingCategory(categoryRequest.Route);
+            await ExistingCategory(categoryRequest.Route);
             Category categoryEntity = _mapper.Map<Category>(categoryRequest);
             await _categoryRepository.AddAsync(categoryEntity);
             await _categoryRepository.SaveChangesAsync();

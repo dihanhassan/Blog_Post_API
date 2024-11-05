@@ -7,12 +7,12 @@ namespace BlogPost.Application.Dto.Request
     {
         public string? Title { get; set; }
         public string? Content { get; set; }
-        public List<int> CategoryIds { get; set; }
+        public List<int>? CategoryIds { get; set; }
         public string Route
         {
             get
             {
-                return GenerateSlug(Route);
+                return GenerateSlug(Title);
             }
         }
         private static string GenerateSlug(string title)
