@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlogPost.Domain.Entities
 {
-    public class PostCategory
+    public class PostCategory: BaseEntity
     {
         [Key]
         [Column("Id")]
