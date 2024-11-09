@@ -45,6 +45,16 @@ namespace BlogPostWebApi.Controllers.Category
             var res = await _categoryService.GetAllCategories();
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route("category-by-id")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        public async Task<IActionResult> GetById( int id)
+        {
+            var res = await _categoryService.GetCategory(id);
+            return Ok(res);
+        }
         #endregion GET
 
         #region Update
