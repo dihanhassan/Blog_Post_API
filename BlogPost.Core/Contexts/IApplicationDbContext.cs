@@ -1,13 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using BlogPost.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlogPost.Domain.Entities;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace BlogPost.Domain.Contexts
 {
@@ -17,9 +11,9 @@ namespace BlogPost.Domain.Contexts
 
         #region DbSets
         DbSet<User> Users { get; set; }
-    /*    DbSet<Category> Categories { get; set; }
+        DbSet<Category> Categories { get; set; }
         DbSet<Post> Posts { get; set; }
-        DbSet<PostCategory> PostCategories { get; set; }*/
+        DbSet<PostCategory> PostCategories { get; set; }
 
         #endregion DbSets
 

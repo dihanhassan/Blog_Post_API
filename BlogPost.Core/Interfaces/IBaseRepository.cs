@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
 namespace BlogPost.Domain.Interfaces
 {
@@ -13,7 +8,7 @@ namespace BlogPost.Domain.Interfaces
         IQueryable<T> Active();
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<IQueryable<T>> GetAllAsync();
-        public IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
+        IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
         Task<IQueryable<T>> GetPagedDataAsync(IQueryable<T> query, int pageIndex, int pageSize);
 
         #endregion Get
@@ -32,5 +27,10 @@ namespace BlogPost.Domain.Interfaces
         Task DeleteAsync(T entity);
         Task RemoveRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
         #endregion Delete
+
+        #region SOFT-DELETE
+        Task SoftDeleteAsync(T entity);
+        Task RestoreDeleteAsync(T entity);
+        #endregion SOFT-DELETE
     }
 }
