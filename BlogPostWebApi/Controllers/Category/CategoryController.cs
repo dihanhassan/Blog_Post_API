@@ -35,6 +35,18 @@ namespace BlogPostWebApi.Controllers.Category
         }
         #endregion SAVE
 
+        #region GET
+        [HttpGet]
+        [Route("category")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CategoryResponse>))]
+        public async Task<IActionResult> GetALLCategory()
+        {
+            var res = await _categoryService.GetAllCategories();
+            return Ok(res);
+        }
+        #endregion GET
+
         #region Update
         [HttpPut]
         [Route("category")]

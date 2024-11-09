@@ -79,9 +79,18 @@ namespace BlogPost.Service.Categories
         }
         #endregion Delete
 
-        public Task<CategoryResponse> GetAllCategories()
+        public async Task<List<CategoryResponse>> GetAllCategories()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var categories  = await _categoryRepository.GetAllAsync();
+                var res = _mapper.Map<List<CategoryResponse>>(categories);
+                return res;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public Task<CategoryResponse> GetCategory(int id)
