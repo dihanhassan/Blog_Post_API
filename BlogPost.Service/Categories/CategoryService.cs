@@ -49,39 +49,61 @@ namespace BlogPost.Service.Categories
         #region Save
         public async Task<CategoryResponse> AddCategory(CategoryRequest categoryRequest, int createdBy)
         {
-            await ExistingCategory(categoryRequest.Route);
-            Category categoryEntity = _mapper.Map<Category>(categoryRequest);
-            await _categoryRepository.AddAsync(categoryEntity);
-            await _categoryRepository.SaveChangesAsync();
-            CategoryResponse res = _mapper.Map<CategoryResponse>(categoryEntity);
-            return res;
+            try
+            {
+                await ExistingCategory(categoryRequest.Route);
+                Category categoryEntity = _mapper.Map<Category>(categoryRequest);
+                await _categoryRepository.AddAsync(categoryEntity);
+                await _categoryRepository.SaveChangesAsync();
+                CategoryResponse res = _mapper.Map<CategoryResponse>(categoryEntity);
+                return res;
+            }
+            catch (Exception)
+            {
+                throw ;
+            }
         }
         #endregion Save
 
         #region Delete
         public async Task<CategoryResponse> DeleteCategory(int id)
         {
-            Category res = await ValidateCategoryUpdateRequest(id);
-            Category? findTagetedCategoryEntity = await _categoryRepository.GetByIdAsync(id);
-            if (findTagetedCategoryEntity is null)
+            try
             {
-                throw new ClientCustomException("Category not found", new()
+                Category res = await ValidateCategoryUpdateRequest(id);
+                Category? findTagetedCategoryEntity = await _categoryRepository.GetByIdAsync(id);
+                if (findTagetedCategoryEntity is null)
+                {
+                    throw new ClientCustomException("Category not found", new()
                 {
                     {"Id", "Category Id is not valid." }
                 });
+                }
+                //var MappedResponse = _mapper.Map<Category>(findTagetedCategoryEntity);
+                await _categoryRepository.SoftDeleteAsync(findTagetedCategoryEntity);
+                await _categoryRepository.SaveChangesAsync();
+                CategoryResponse deletedCategoryResponse = _mapper.Map<CategoryResponse>(findTagetedCategoryEntity);
+                return deletedCategoryResponse;
             }
-            //var MappedResponse = _mapper.Map<Category>(findTagetedCategoryEntity);
-            await _categoryRepository.SoftDeleteAsync(findTagetedCategoryEntity);
-            await _categoryRepository.SaveChangesAsync();
-            CategoryResponse deletedCategoryResponse = _mapper.Map<CategoryResponse>(findTagetedCategoryEntity);
-            return deletedCategoryResponse;
-
+            catch(Exception)
+            {
+                throw;
+            }
         }
         #endregion Delete
 
-        public Task<CategoryResponse> GetAllCategories()
+        public async Task<List<CategoryResponse>> GetAllCategories()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _categoryRepository.GetAllAsync();
+                var mappedResponse = _mapper.Map<List<CategoryResponse>>(response);
+                return mappedResponse;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public Task<CategoryResponse> GetCategory(int id)
