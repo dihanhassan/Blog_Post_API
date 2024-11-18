@@ -41,6 +41,17 @@ namespace BlogPostWebApi.Controllers.Posts
             return Ok(res);
 
         }
+
+        [HttpPost]
+        [Route("get-by-id")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostResponse))]
+        public async Task<IActionResult> GetPosts(int id)
+        {
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
+            var res = await _postService.GetPost(id);
+            return Ok(res);
+
+        }
         #endregion GET
 
         #region Delete

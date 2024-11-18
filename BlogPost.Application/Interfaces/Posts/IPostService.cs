@@ -9,5 +9,6 @@ namespace BlogPost.Application.Interfaces.Posts
         public Task<PostResponse> UpdatePosts(PostRequest post, int PostId);
         public Task<PostResponse> DeletePosts(int id);
         Task<List<PostResponse>> GetAllPosts();
+        Task<PostResponse> GetPost(int id);
     }
 }

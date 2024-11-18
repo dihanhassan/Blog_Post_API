@@ -79,6 +79,12 @@ namespace BlogPost.Service.Posts
             }
         }
 
+        public async Task<PostResponse> GetPost(int id)
+        {
+            Post? post = await _postRepository.GetByIdAsync(id);
+            return _mapper.Map<PostResponse>(post);
+        }
+
         public async Task<PostResponse> DeletePosts(int id)
         {
             Post? deletedEntity = await _postRepository.GetByIdAsync(id);
