@@ -30,6 +30,19 @@ namespace BlogPostWebApi.Controllers.Posts
         }
         #endregion SAVE
 
+        #region GET
+        [HttpPost]
+        [Route("get-all-posts")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PostResponse>))]
+        public async Task<IActionResult> GetAllPosts()
+        {
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
+            var res = await _postService.GetAllPosts();
+            return Ok(res);
+
+        }
+        #endregion GET
+
         #region Delete
         [HttpDelete]
         [Route("post")]

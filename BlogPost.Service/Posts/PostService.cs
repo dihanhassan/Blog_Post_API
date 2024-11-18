@@ -66,6 +66,19 @@ namespace BlogPost.Service.Posts
             
         }
 
+        public async Task<List<PostResponse>> GetAllPosts()
+        {
+            try
+            {
+                var postList = await _postRepository.GetAllAsync();
+                return _mapper.Map<List<PostResponse>>(postList);
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<PostResponse> DeletePosts(int id)
         {
             Post? deletedEntity = await _postRepository.GetByIdAsync(id);
