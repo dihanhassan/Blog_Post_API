@@ -96,9 +96,9 @@ namespace BlogPost.Service.Categories
         {
             try
             {
-                var response = await _categoryRepository.GetAllAsync();
-                var mappedResponse = _mapper.Map<List<CategoryResponse>>(response);
-                return mappedResponse;
+                var categories  = await _categoryRepository.GetAllAsync();
+                var res = _mapper.Map<List<CategoryResponse>>(categories);
+                return res;
             }
             catch (Exception)
             {
@@ -106,9 +106,18 @@ namespace BlogPost.Service.Categories
             }
         }
 
-        public Task<CategoryResponse> GetCategory(int id)
+        public async Task<CategoryResponse> GetCategory(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var category = await _categoryRepository.GetByIdAsync(id);
+                var res = _mapper.Map<CategoryResponse>(category);
+                return res;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #region Update
         public async Task<CategoryResponse> UpdateCategory(CategoryRequest categoryRequest, int id)
