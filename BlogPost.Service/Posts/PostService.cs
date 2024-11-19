@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogPost.Application.CustomExceptions;
 using BlogPost.Application.Dto.Request;
 using BlogPost.Application.Dto.Response;
 using BlogPost.Application.Interfaces.Posts;
@@ -45,6 +46,26 @@ namespace BlogPost.Service.Posts
                 }
                 await _postCategoryRepository.AddRangeAsync(postCategoryList);
                 await _postCategoryRepository.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private async Task<Post> ValidatePostUpdateRequest(int id)
+        {
+            try
+            {
+                Post? post = await _postRepository.GetByIdAsync(id);
+                if (post == null)
+                {
+                    throw new ClientCustomException("Post not found", new()
+                    {
+                        {"Id", "Post Id is not valid." }
+                    });
+                }
+                return await Task.FromResult(post);
             }
             catch (Exception)
             {
@@ -119,8 +140,23 @@ namespace BlogPost.Service.Posts
             }
         }
 
-        public Task<ResponseDto<PostResponse>> UpdatePosts(PostRequest post, int id)
+        public async Task<ResponseDto<PostResponse>> UpdatePosts(PostRequest postreq, int id)
         {
+            try
+            {
+                // can mapping problem
+                Post? post = await ValidatePostUpdateRequest(id);
+                Post postEntity = _mapper.Map<Post>(postreq);
+                postEntity.Id = id;
+                await _postRepository.UpdateAsync(postEntity);
+                await _postRepository.SaveChangesAsync();
+                var postRes = _mapper.Map<PostResponse>(postEntity);
+                return await ServiceHelper.MapToResponse(postRes, "Post updated successfully");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             throw new NotImplementedException();
         }
     }
