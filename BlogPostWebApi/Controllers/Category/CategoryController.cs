@@ -30,7 +30,7 @@ namespace BlogPostWebApi.Controllers.Category
         {
             
             var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
-            CategoryResponse res = await _categoryService.AddCategory(categoryRequest, Convert.ToInt32(userId));
+            var  res = await _categoryService.AddCategory(categoryRequest, Convert.ToInt32(userId));
             return Ok(res);
         }
         #endregion SAVE
@@ -63,7 +63,7 @@ namespace BlogPostWebApi.Controllers.Category
         [Authorize]
         public async Task<IActionResult> UpdateCategory([FromBody] CategoryRequest categoryRequest, int id)
         {
-            CategoryResponse res = await _categoryService.UpdateCategory(categoryRequest, id);
+           var res = await _categoryService.UpdateCategory(categoryRequest, id);
             return Ok(res);
         }
 
@@ -75,7 +75,7 @@ namespace BlogPostWebApi.Controllers.Category
         [Authorize]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            CategoryResponse res = await _categoryService.DeleteCategory(id);
+            var res = await _categoryService.DeleteCategory(id);
             return Ok(res);
         }
         #endregion Delete

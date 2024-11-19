@@ -5,6 +5,7 @@ using BlogPost.Application.Dto.Response;
 using BlogPost.Application.Interfaces.Categories;
 using BlogPost.Domain.Entities;
 using BlogPost.Domain.Interfaces.Categories;
+using BlogPost.Service.Helper;
 
 namespace BlogPost.Service.Categories
 {
@@ -47,7 +48,7 @@ namespace BlogPost.Service.Categories
         #endregion Private
 
         #region Save
-        public async Task<CategoryResponse> AddCategory(CategoryRequest categoryRequest, int createdBy)
+        public async Task<ResponseDto<CategoryResponse>> AddCategory(CategoryRequest categoryRequest, int createdBy)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace BlogPost.Service.Categories
                 await _categoryRepository.AddAsync(categoryEntity);
                 await _categoryRepository.SaveChangesAsync();
                 CategoryResponse res = _mapper.Map<CategoryResponse>(categoryEntity);
-                return res;
+                return await ServiceHelper.MapToResponse(res,"Add Category Successfully.");
             }
             catch (Exception)
             {
@@ -66,7 +67,7 @@ namespace BlogPost.Service.Categories
         #endregion Save
 
         #region Delete
-        public async Task<CategoryResponse> DeleteCategory(int id)
+        public async Task<ResponseDto<CategoryResponse>> DeleteCategory(int id)
         {
             try
             {
@@ -83,7 +84,7 @@ namespace BlogPost.Service.Categories
                 await _categoryRepository.SoftDeleteAsync(findTagetedCategoryEntity);
                 await _categoryRepository.SaveChangesAsync();
                 CategoryResponse deletedCategoryResponse = _mapper.Map<CategoryResponse>(findTagetedCategoryEntity);
-                return deletedCategoryResponse;
+                return await ServiceHelper.MapToResponse(deletedCategoryResponse,"Deleted Category Successfully.");
             }
             catch(Exception)
             {
@@ -92,13 +93,13 @@ namespace BlogPost.Service.Categories
         }
         #endregion Delete
 
-        public async Task<List<CategoryResponse>> GetAllCategories()
+        public async Task<ResponseDto<List<CategoryResponse>>> GetAllCategories()
         {
             try
             {
                 var categories  = await _categoryRepository.GetAllAsync();
                 var res = _mapper.Map<List<CategoryResponse>>(categories);
-                return res;
+                return await ServiceHelper.MapToResponse(res,"Fetched all categories SuccessFully");
             }
             catch (Exception)
             {
@@ -106,13 +107,13 @@ namespace BlogPost.Service.Categories
             }
         }
 
-        public async Task<CategoryResponse> GetCategory(int id)
+        public async Task<ResponseDto<CategoryResponse>> GetCategory(int id)
         {
             try
             {
                 var category = await _categoryRepository.GetByIdAsync(id);
                 var res = _mapper.Map<CategoryResponse>(category);
-                return res;
+                return await ServiceHelper.MapToResponse(res, "Fetched Category Successfully");
             }
             catch (Exception)
             {
@@ -120,7 +121,7 @@ namespace BlogPost.Service.Categories
             }
         }
         #region Update
-        public async Task<CategoryResponse> UpdateCategory(CategoryRequest categoryRequest, int id)
+        public async Task<ResponseDto<CategoryResponse>> UpdateCategory(CategoryRequest categoryRequest, int id)
         {
             Category res = await ValidateCategoryUpdateRequest(id);
             res.Name = categoryRequest.Name ?? res.Name;
@@ -128,7 +129,7 @@ namespace BlogPost.Service.Categories
             await _categoryRepository.UpdateAsync(res);
             await _categoryRepository.SaveChangesAsync();
             CategoryResponse response = _mapper.Map<CategoryResponse>(res);
-            return response;
+            return await ServiceHelper.MapToResponse(response,"Update Category Successfully");
 
         }
         #endregion Update

@@ -6,20 +6,20 @@ namespace BlogPost.Application.Interfaces.Categories
     public interface ICategoryService
     {
         #region Get
-        Task<CategoryResponse> GetCategory(int id);
-        Task<List<CategoryResponse>> GetAllCategories();
+        Task<ResponseDto<CategoryResponse>> GetCategory(int id);
+        Task<ResponseDto<List<CategoryResponse>>> GetAllCategories();
         #endregion Get
 
         #region Save
-        Task<CategoryResponse> AddCategory(CategoryRequest categoryRequest, int createdBy);
+        Task<ResponseDto<CategoryResponse>> AddCategory(CategoryRequest categoryRequest, int createdBy);
         #endregion Save
 
         #region Update
-        Task<CategoryResponse> UpdateCategory(CategoryRequest categoryRequest, int id);
+        Task<ResponseDto<CategoryResponse>> UpdateCategory(CategoryRequest categoryRequest, int id);
         #endregion Update
 
         #region Delete
-        Task<CategoryResponse> DeleteCategory(int id);
+        Task<ResponseDto<CategoryResponse>> DeleteCategory(int id);
         #endregion Delete
 
     }
