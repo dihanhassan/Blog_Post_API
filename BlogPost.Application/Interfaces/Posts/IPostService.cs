@@ -5,10 +5,10 @@ namespace BlogPost.Application.Interfaces.Posts
 {
     public interface IPostService
     {
-        public Task<PostResponse> AddPosts(PostRequest post, int AuthorId);
-        public Task<PostResponse> UpdatePosts(PostRequest post, int PostId);
-        public Task<PostResponse> DeletePosts(int id);
-        Task<List<PostResponse>> GetAllPosts();
-        Task<PostResponse> GetPost(int id);
+        Task<ResponseDto<PostResponse>> AddPosts(PostRequest post, int AuthorId);
+        Task<ResponseDto<PostResponse>> UpdatePosts(PostRequest post, int PostId);
+        Task<ResponseDto<PostResponse>> DeletePosts(int id);
+        Task<ResponseDto<List<PostResponse>>> GetAllPosts();
+        Task<ResponseDto<PostResponse>> GetPost(int id);
     }
 }

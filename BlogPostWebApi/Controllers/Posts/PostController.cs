@@ -24,7 +24,7 @@ namespace BlogPostWebApi.Controllers.Posts
         public async Task<IActionResult> AddPosts([FromBody] PostRequest request)
         {
             var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
-            PostResponse res = await _postService.AddPosts(request, Convert.ToInt32(userId));
+            var res = await _postService.AddPosts(request, Convert.ToInt32(userId));
             return Ok(res);
 
         }
@@ -59,7 +59,7 @@ namespace BlogPostWebApi.Controllers.Posts
         [Route("post")]
         public async Task<IActionResult> DeletePost(int id)
         {
-            PostResponse res = await _postService.DeletePosts(id);
+            var res = await _postService.DeletePosts(id);
             return Ok(res);
         }
         #endregion Delete

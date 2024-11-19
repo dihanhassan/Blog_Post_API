@@ -30,22 +30,29 @@ namespace BlogPost.Service.Posts
         #region private
         private async Task AddPostCategoryAsync(List<int> categoryIds, int postId)
         {
-            List<PostCategory> postCategoryList = [];
-            foreach (var categoryId in categoryIds)
+            try
             {
-                PostCategory postCategory = new()
+                List<PostCategory> postCategoryList = [];
+                foreach (var categoryId in categoryIds)
                 {
-                    CategoryId = categoryId,
-                    PostId = postId
-                };
-                postCategoryList.Add(postCategory);
+                    PostCategory postCategory = new()
+                    {
+                        CategoryId = categoryId,
+                        PostId = postId
+                    };
+                    postCategoryList.Add(postCategory);
+                }
+                await _postCategoryRepository.AddRangeAsync(postCategoryList);
+                await _postCategoryRepository.SaveChangesAsync();
             }
-            await _postCategoryRepository.AddRangeAsync(postCategoryList);
-            await _postCategoryRepository.SaveChangesAsync();
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #endregion private
-        public async Task<PostResponse> AddPosts(PostRequest post, int AuthorId)
+        public async Task<ResponseDto<PostResponse>> AddPosts(PostRequest post, int AuthorId)
         {
             try
             {
@@ -55,7 +62,8 @@ namespace BlogPost.Service.Posts
                 await _postRepository.SaveChangesAsync();
                 await AddPostCategoryAsync(post.CategoryIds, res.Id);
                 await _transaction.CommitAsync();
-                return _mapper.Map<PostResponse>(res);
+                var postRes = _mapper.Map<PostResponse>(res);
+                return await MapToResponse(postRes, "Post added successfully");
 
             }
             catch (Exception)
@@ -66,12 +74,13 @@ namespace BlogPost.Service.Posts
             
         }
 
-        public async Task<List<PostResponse>> GetAllPosts()
+        public async Task<ResponseDto<List<PostResponse>>> GetAllPosts()
         {
             try
             {
                 var postList = await _postRepository.GetAllAsync();
-                return _mapper.Map<List<PostResponse>>(postList);
+                var postRes =  _mapper.Map<List<PostResponse>>(postList);
+                return await MapToResponse(postRes, "Post fetched successfully");
             }
             catch(Exception)
             {
@@ -79,23 +88,50 @@ namespace BlogPost.Service.Posts
             }
         }
 
-        public async Task<PostResponse> GetPost(int id)
+        public async Task<ResponseDto<PostResponse>> GetPost(int id)
         {
-            Post? post = await _postRepository.GetByIdAsync(id);
-            return _mapper.Map<PostResponse>(post);
+            try
+            {
+                Post? post = await _postRepository.GetByIdAsync(id);
+                var postRes = _mapper.Map<PostResponse>(post);
+                return await MapToResponse(postRes, "Post fetched successfully");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<PostResponse> DeletePosts(int id)
+        public async Task<ResponseDto<PostResponse>> DeletePosts(int id)
         {
-            Post? deletedEntity = await _postRepository.GetByIdAsync(id);
-            //await _postRepository.DeleteAsync(deletedEntity);
-            await _postRepository.SoftDeleteAsync(deletedEntity);
-            return _mapper.Map<PostResponse>(deletedEntity);
+            try
+            {
+                Post? deletedEntity = await _postRepository.GetByIdAsync(id);
+                //await _postRepository.DeleteAsync(deletedEntity);
+                await _postRepository.SoftDeleteAsync(deletedEntity);
+                var postRes = _mapper.Map<PostResponse>(deletedEntity);
+                return await MapToResponse(postRes, "Post deleted successfully");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<PostResponse> UpdatePosts(PostRequest post, int id)
+        public Task<ResponseDto<PostResponse>> UpdatePosts(PostRequest post, int id)
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<ResponseDto<T>> MapToResponse<T>(T data, string msg) where T : class
+        {
+            ResponseDto<T> response = new()
+            {
+                Data = data,
+                Message = msg,
+                StatusCode = 200
+            };
+            return await Task.FromResult(response);
         }
     }
 }
