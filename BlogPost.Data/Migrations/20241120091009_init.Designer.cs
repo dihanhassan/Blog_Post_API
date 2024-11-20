@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogPost.Data.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    [Migration("20241109162736_init")]
+    [Migration("20241120091009_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -68,6 +68,9 @@ namespace BlogPost.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")

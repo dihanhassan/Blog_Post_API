@@ -31,7 +31,7 @@ namespace BlogPostWebApi.Controllers.Posts
         #endregion SAVE
 
         #region GET
-        [HttpPost]
+        [HttpGet]
         [Route("get-all-posts")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PostResponse>))]
         public async Task<IActionResult> GetAllPosts()

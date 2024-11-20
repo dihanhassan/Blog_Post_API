@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 #nullable disable
 
@@ -42,6 +42,7 @@ namespace BlogPost.Data.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Route = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)

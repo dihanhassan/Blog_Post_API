@@ -47,7 +47,7 @@ namespace BlogPostWebApi.Controllers.Category
         }
 
         [HttpGet]
-        [Route("category-by-id")]
+        [Route("get-by-id")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
         public async Task<IActionResult> GetById( int id)

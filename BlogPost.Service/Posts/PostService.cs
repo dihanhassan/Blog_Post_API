@@ -17,17 +17,20 @@ namespace BlogPost.Service.Posts
         private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IMapper _mapper;
         private readonly ITransactionUtil _transaction;
+        private readonly IAuthRepository _authRepository;
         public PostService(
 
             IPostRepository postRepository, IMapper mapper,
             ITransactionUtil transaction,
-            IPostCategoryRepository postCategoryRepository
+            IPostCategoryRepository postCategoryRepository,
+            IAuthRepository authRepository
         )
         {
             _postRepository = postRepository;
             _mapper = mapper;
             _transaction = transaction;
             _postCategoryRepository = postCategoryRepository;
+            _authRepository = authRepository;
         }
         #region private
         private async Task AddPostCategoryAsync(List<int> categoryIds, int postId)
@@ -73,6 +76,27 @@ namespace BlogPost.Service.Posts
             }
         }
 
+        private async Task<string> GetAutherName(int AuthorId)
+        {
+            try
+            {
+                User? user = await _authRepository.GetByIdAsync(AuthorId);
+                if (user == null)
+                {
+                    throw new ClientCustomException("User not found", new()
+                    {
+                        {"Id", "User Id is not valid." }
+                    });
+                }
+                string name = $"{user.FirstName} {user.LastName}";
+                return await Task.FromResult(name);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         #endregion private
         public async Task<ResponseDto<PostResponse>> AddPosts(PostRequest post, int AuthorId)
         {
@@ -80,6 +104,8 @@ namespace BlogPost.Service.Posts
             {
                 await _transaction.BeginAsync();
                 Post PostEntity = _mapper.Map<Post>(post);
+                string? AutherName = await GetAutherName(AuthorId); 
+                PostEntity.CreatedBy = AutherName;
                 Post res = await _postRepository.AddAsync(PostEntity);
                 await _postRepository.SaveChangesAsync();
                 await AddPostCategoryAsync(post.CategoryIds, res.Id);

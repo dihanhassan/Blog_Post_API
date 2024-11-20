@@ -16,6 +16,7 @@ namespace BlogPost.Domain.Entities
         public string? Title { get; set; }
         public string? Route { get; set; }
         public string? Content { get; set; }
+        public string? CreatedBy { get; set; }
         public virtual ICollection<PostCategory> PostCategories { get; set; }
     }
 }
