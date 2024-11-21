@@ -8,6 +8,7 @@ namespace BlogPost.Application.Interfaces.Categories
         #region Get
         Task<ResponseDto<CategoryResponse>> GetCategory(int id);
         Task<ResponseDto<List<CategoryResponse>>> GetAllCategories();
+        Task<ResponseDto<List<PostCategoryResponse>>> GetAllPostCategory();
         #endregion Get
 
         #region Save

@@ -12,11 +12,13 @@ namespace BlogPost.Service.Categories
     public class CategoryService : ICategoryService
     {
         public readonly ICategoryRepository _categoryRepository;
+        public readonly IPostCategoryRepository _postCategoryRepository;
         public readonly IMapper _mapper;
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IPostCategoryRepository postCategoryRepository)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _postCategoryRepository = postCategoryRepository;
         }
         #region Private
         private async Task<Category> ValidateCategoryUpdateRequest(int id)
@@ -92,7 +94,7 @@ namespace BlogPost.Service.Categories
             }
         }
         #endregion Delete
-
+        #region Get
         public async Task<ResponseDto<List<CategoryResponse>>> GetAllCategories()
         {
             try
@@ -120,6 +122,23 @@ namespace BlogPost.Service.Categories
                 throw;
             }
         }
+
+        public async Task<ResponseDto<List<PostCategoryResponse>>> GetAllPostCategory()
+        {
+            try
+            {
+                var postCategories = await _postCategoryRepository.GetAllAsync();
+                var res = _mapper.Map<List<PostCategoryResponse>>(postCategories);
+                return await ServiceHelper.MapToResponse(res, "Fetched all post categories SuccessFully");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion Get
+
         #region Update
         public async Task<ResponseDto<CategoryResponse>> UpdateCategory(CategoryRequest categoryRequest, int id)
         {

@@ -40,7 +40,6 @@ namespace BlogPost.Repo
         //}
         public async Task<IQueryable<T>> GetAllAsync()
         {
-            // Assuming T has an IsDeleted property
             return _context.Set<T>()
                            .Where(entity => EF.Property<bool>(entity, "IsDeleted") == false) // Exclude IsDeleted = true
                            .AsNoTracking();

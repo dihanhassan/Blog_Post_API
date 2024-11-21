@@ -47,6 +47,15 @@ namespace BlogPostWebApi.Controllers.Category
         }
 
         [HttpGet]
+        [Route("get-post-category")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PostCategoryResponse>))]
+        public async Task<IActionResult> GetALLPostCategory()
+        {
+            var res = await _categoryService.GetAllPostCategory();
+            return Ok(res);
+        }
+
+        [HttpGet]
         [Route("get-by-id")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
