@@ -150,6 +150,20 @@ namespace BlogPost.Service.Posts
             }
         }
 
+        public async Task<ResponseDto<List<PostResponse>>> GetAllPostByCategory(int id)
+        {
+            try
+            {
+                var postList = await _postRepository.GetAllPostsByCategory(id);
+                var postRes = _mapper.Map<List<PostResponse>>(postList);
+                return await ServiceHelper.MapToResponse(postRes, "Post fetched successfully");
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<ResponseDto<PostResponse>> DeletePosts(int id)
         {
             try

@@ -10,5 +10,6 @@ namespace BlogPost.Application.Interfaces.Posts
         Task<ResponseDto<PostResponse>> DeletePosts(int id);
         Task<ResponseDto<List<PostResponse>>> GetAllPosts();
         Task<ResponseDto<PostResponse>> GetPost(int id);
+        Task<ResponseDto<List<PostResponse>>> GetAllPostByCategory(int id);
     }
 }
