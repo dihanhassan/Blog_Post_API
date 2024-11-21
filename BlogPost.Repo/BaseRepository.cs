@@ -34,11 +34,17 @@ namespace BlogPost.Repo
             return _context.Set<T>().Where(expression).AsNoTracking();
         }
 
+        //public async Task<IQueryable<T>> GetAllAsync()
+        //{
+        //    return _context.Set<T>().AsNoTracking();
+        //}
         public async Task<IQueryable<T>> GetAllAsync()
         {
-            return _context.Set<T>().AsNoTracking();
+            // Assuming T has an IsDeleted property
+            return _context.Set<T>()
+                           .Where(entity => EF.Property<bool>(entity, "IsDeleted") == false) // Exclude IsDeleted = true
+                           .AsNoTracking();
         }
-
 
         public Task<IQueryable<T>> GetPagedDataAsync(IQueryable<T> query, int pageIndex, int pageSize)
         {
